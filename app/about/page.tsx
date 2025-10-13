@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ActivityHeatmap } from "@/components/activity-heatmap"
+// import { ActivityHeatmap } from "@/components/activity-heatmap"
 
 const skills = {
   Backend: ["Node.js", "Express", "Python", "PostgreSQL", "MongoDB"],
@@ -108,11 +108,11 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Activity Heatmap */}
+      {/* Activity Heatmap
       <div className="space-y-6">
         <h2 className="font-mono text-2xl font-bold">Activity</h2>
         <ActivityHeatmap title="Learning & Building Days" />
-      </div>
+      </div> */}
 
       {/* NOW Page Preview */}
       <Card>

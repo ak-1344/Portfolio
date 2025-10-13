@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ParallaxCard } from "@/components/parallax-card"
-import { ActivityHeatmap } from "@/components/activity-heatmap"
+// import { ActivityHeatmap } from "@/components/activity-heatmap"
 import { projects, blogPosts } from "@/lib/data"
 import { mediaItems } from "@/lib/media-data"
 import { Github, Linkedin, Mail, ArrowRight, Send, ChevronLeft, ChevronRight } from "lucide-react"
@@ -40,9 +40,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="min-h-screen flex items-center relative overflow-hidden">
         {/* Background Media */}
-        <div className="absolute inset-0 opacity-5">
+        {/* <div className="absolute inset-0 opacity-5">
           <Image src="/placeholder.svg?height=1080&width=1920" alt="Coding background" fill className="object-cover" />
-        </div>
+        </div> */}
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -56,11 +56,10 @@ export default function HomePage() {
                   Hey, I'm <span className="text-primary">Ak</span>.
                 </h1>
                 <div className="font-mono text-xl md:text-2xl text-muted-foreground space-y-2">
-                  <div>Backend Developer | Builder | Explorer</div>
+                  <div> Developer | Builder | Explorer </div>
                   <div className="text-sm md:text-base mt-4 leading-relaxed">
-                    I build scalable systems, write thoughtful blogs,
-                    <br />
-                    and explore AI, EEG, and real-world data.
+                    I build things out of curiosity, explore the tech world,
+                    <br /> and share my thoughts through blogs.
                   </div>
                 </div>
               </div>
@@ -82,17 +81,17 @@ export default function HomePage() {
 
               <div className="flex space-x-4 pt-4">
                 <Button variant="ghost" size="sm" asChild>
-                  <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/ak-1344" target="_blank" rel="noopener noreferrer">
                     <Github className="h-5 w-5" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="sm" asChild>
-                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://linkedin.com/in/aditya1344" target="_blank" rel="noopener noreferrer">
                     <Linkedin className="h-5 w-5" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="sm" asChild>
-                  <a href="mailto:ak@example.com">
+                  <a href="mailto:adityakhatkar97.3@gmail.com">
                     <Mail className="h-5 w-5" />
                   </a>
                 </Button>
@@ -106,7 +105,7 @@ export default function HomePage() {
                   <div className="w-80 h-80 rounded-full border-2 border-primary/20 p-2 hover:border-primary/40 transition-colors group-hover:scale-105 duration-300">
                     <div className="w-full h-full rounded-full overflow-hidden bg-muted">
                       <Image
-                        src="/placeholder.svg?height=320&width=320"
+                        src="/profilePic.jpg"
                         alt="Ak's Profile"
                         width={320}
                         height={320}
@@ -115,7 +114,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="absolute -bottom-4 -right-4 font-mono text-sm text-muted-foreground bg-background border rounded px-2 py-1 group-hover:scale-110 transition-transform">
-                    ./ak.jpg
+                    ./ak.heic
                   </div>
                 </div>
               </ParallaxCard>
@@ -134,37 +133,32 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <ParallaxCard disableTilt={true}>
+            <div className="flex justify-center">
+            <div className="w-full max-w-3xl" style={{ width: "60vw" }}>
+              <ParallaxCard disableTilt={true}>
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-mono">Background</CardTitle>
+                <CardTitle className="font-mono">Background</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="font-mono text-sm leading-relaxed">
-                    I'm a backend-focused engineering student with a passion for building robust, scalable systems. My
-                    journey spans from club leadership to ML research, with hands-on experience in EEG signal processing
-                    and real-world data analysis.
-                  </p>
-                  <div className="flex flex-wrap gap-2 pt-4">
-                    {skills.map((skill) => (
-                      <Badge key={skill} variant="secondary" className="font-mono text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button asChild className="font-mono mt-4">
-                    <Link href="/about">Know Me More</Link>
-                  </Button>
+                <p className="font-mono text-sm leading-relaxed">
+                  I’m an engineering student driven by curiosity and a passion for building impactful projects. My journey spans club leadership and turning innovative ideas into reality, with hands-on experience in server-side development and backend technologies.
+                </p>
+                <div className="flex flex-wrap gap-2 pt-4">
+                  {skills.map((skill) => (
+                  <Badge key={skill} variant="secondary" className="font-mono text-xs">
+                    {skill}
+                  </Badge>
+                  ))}
+                </div>
+                <Button asChild className="font-mono mt-4">
+                  <Link href="/about">Know Me More</Link>
+                </Button>
                 </CardContent>
               </Card>
-            </ParallaxCard>
-
-            <div className="space-y-6">
-              <h3 className="font-mono text-xl font-bold">Activity Overview</h3>
-              <ActivityHeatmap title="Learning & Building Days" className="scale-90 origin-left" />
+              </ParallaxCard>
             </div>
-          </div>
+            </div>
         </div>
       </section>
 
@@ -421,17 +415,17 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <a
-                      href="mailto:ak@example.com"
+                      href="mailto:adityakhatkar97.3@gmail.com"
                       className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
                     >
                       <Mail className="h-5 w-5 text-primary" />
                       <div>
                         <div className="font-medium">Email</div>
-                        <div className="text-sm text-muted-foreground">ak@example.com</div>
+                        <div className="text-sm text-muted-foreground">adityakhatkar97.3@gmail.com</div>
                       </div>
                     </a>
                     <a
-                      href="https://github.com"
+                      href="https://github.com/ak-1344"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
@@ -439,11 +433,11 @@ export default function HomePage() {
                       <Github className="h-5 w-5 text-primary" />
                       <div>
                         <div className="font-medium">GitHub</div>
-                        <div className="text-sm text-muted-foreground">@ak-dev</div>
+                        <div className="text-sm text-muted-foreground">@ak-1344</div>
                       </div>
                     </a>
                     <a
-                      href="https://linkedin.com"
+                      href="https://linkedin.com/in/aditya1344"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
@@ -451,7 +445,7 @@ export default function HomePage() {
                       <Linkedin className="h-5 w-5 text-primary" />
                       <div>
                         <div className="font-medium">LinkedIn</div>
-                        <div className="text-sm text-muted-foreground">Ak Developer</div>
+                        <div className="text-sm text-muted-foreground">Aditya</div>
                       </div>
                     </a>
                   </CardContent>
@@ -463,10 +457,10 @@ export default function HomePage() {
                   <CardContent className="pt-6">
                     <blockquote className="font-mono text-sm leading-relaxed">
                       <p className="mb-4">
-                        "The best way to predict the future is to build it. Every great system starts with a simple idea
-                        and grows through iteration, collaboration, and relentless improvement."
+                        "The best way to fill your needs is to build a solution for it. 
+                        <br />Every great product starts with a simple idea and grows through iteration, collaboration, and relentless improvement."
                       </p>
-                      <footer className="text-muted-foreground">— My approach to development</footer>
+                      <footer className="text-muted-foreground">~ My approach to development</footer>
                     </blockquote>
                   </CardContent>
                 </Card>
@@ -481,21 +475,21 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="font-mono text-sm text-muted-foreground">
-              © 2024 Ak. Built with Next.js, Tailwind CSS, and lots of ☕
+              © 2025 Ak. Built with passion and curiosity ☕
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" asChild>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/ak-1344" target="_blank" rel="noopener noreferrer">
                   <Github className="h-4 w-4" />
                 </a>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://linkedin.com/in/aditya1344" target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-4 w-4" />
                 </a>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <a href="mailto:ak@example.com">
+                <a href="mailto:adityakhatkar97.3@gmail.com">
                   <Mail className="h-4 w-4" />
                 </a>
               </Button>

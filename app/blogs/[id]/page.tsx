@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { blogPosts } from "@/lib/data"
+import { supabase } from "@/lib/supabaseClient"
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react"
 
 interface BlogPageProps {
@@ -13,16 +13,42 @@ interface BlogPageProps {
   }
 }
 
-export default function BlogPage({ params }: BlogPageProps) {
-  const post = blogPosts.find((p) => p.id === params.id)
+type BlogPost = {
+  id: string
+  title: string
+  summary: string
+  content: string
+  date: string
+  tags: string[]
+  cover_image: string
+  read_time: number
+  created_at?: string
+}
 
-  if (!post) {
+export default async function BlogPage({ params }: BlogPageProps) {
+  // Fetch the main blog post
+  const { data: post, error } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("id", params.id)
+    .single()
+
+  if (!post || error) {
+    console.error("Error fetching blog post:", error)
     notFound()
   }
 
-  const relatedPosts = blogPosts
-    .filter((p) => p.id !== post.id && p.tags.some((tag) => post.tags.includes(tag)))
-    .slice(0, 3)
+  // Fetch related posts based on tags
+  const { data: allPosts } = await supabase
+    .from("blogs")
+    .select("*")
+    .neq("id", post.id)
+  
+  const relatedPosts = allPosts
+    ? allPosts
+        .filter((p) => p.tags?.some((tag: string) => post.tags?.includes(tag)))
+        .slice(0, 3)
+    : []
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -39,7 +65,7 @@ export default function BlogPage({ params }: BlogPageProps) {
         <div className="space-y-6">
           <div className="aspect-video overflow-hidden rounded-lg border">
             <Image
-              src={post.coverImage || "/placeholder.svg"}
+              src={post.cover_image || "/placeholder.svg"}
               alt={post.title}
               width={800}
               height={400}
@@ -57,16 +83,16 @@ export default function BlogPage({ params }: BlogPageProps) {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {new Date(post.date).toLocaleDateString()}
+                {new Date(post.date || post.created_at || '').toLocaleDateString()}
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                {post.readTime} min read
+                {post.read_time} min read
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.tags?.map((tag) => (
                 <Badge key={tag} variant="secondary" className="font-mono">
                   {tag}
                 </Badge>

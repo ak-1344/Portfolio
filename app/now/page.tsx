@@ -1,46 +1,72 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, Target } from "lucide-react"
+import { supabase } from "@/lib/supabaseClient"
 
-const currentProjects = [
-  {
-    title: "EEG ML Classification Project",
-    description: "Building a machine learning model to classify EEG signals with high accuracy",
-    status: "In Progress",
-    progress: 75,
-    timeline: "Expected completion: March 2024",
-  },
-  {
-    title: "Nexus Club Website",
-    description: "Full-stack platform for club management and member engagement",
-    status: "Development",
-    progress: 60,
-    timeline: "Beta launch: February 2024",
-  },
-  {
-    title: "Backend Architecture Research",
-    description: "Researching scalable system architectures for high-traffic applications",
-    status: "Research",
-    progress: 40,
-    timeline: "Ongoing study",
-  },
-]
+type CurrentProject = {
+  id: string
+  name: string
+  description: string
+  tag: string
+  progress: number
+  comments?: string
+  created_at: string
+  updated_at: string
+}
 
-const currentLearning = [
-  "Advanced EEG signal processing techniques",
-  "Kubernetes orchestration and deployment",
-  "System design patterns for microservices",
-  "Real-time data streaming with Apache Kafka",
-]
-
-const recentReads = [
-  "Designing Data-Intensive Applications by Martin Kleppmann",
-  "Clean Architecture by Robert C. Martin",
-  "The Pragmatic Programmer by David Thomas",
-]
+type NowMeta = {
+  id: string
+  currently_learning: string
+  recent_reads: string
+  current_philosophy: string
+  updated_at: string
+}
 
 export default function NowPage() {
-  const lastUpdated = "January 15, 2024"
+  const [currentProjects, setCurrentProjects] = useState<CurrentProject[]>([])
+  const [nowMeta, setNowMeta] = useState<NowMeta | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchNowData = async () => {
+      setLoading(true)
+      
+      // Fetch current projects from now_projects table
+      const { data: projectsData, error: projectsError } = await supabase
+        .from("now_projects")
+        .select("*")
+        .order("updated_at", { ascending: false })
+      
+      // Fetch now meta data from now_meta table
+      const { data: metaData, error: metaError } = await supabase
+        .from("now_meta")
+        .select("*")
+        .single()
+
+      if (projectsError) console.error("Error fetching now projects:", projectsError)
+      else setCurrentProjects(projectsData || [])
+      
+      if (metaError) console.error("Error fetching now meta:", metaError)
+      else setNowMeta(metaData)
+      
+      setLoading(false)
+    }
+
+    fetchNowData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <div className="text-center py-12">
+          <p className="font-mono text-muted-foreground">Loading current activities...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl space-y-12">
@@ -49,7 +75,7 @@ export default function NowPage() {
         <p className="font-mono text-muted-foreground text-lg">What I'm currently focused on and working towards.</p>
         <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
           <Clock className="h-4 w-4" />
-          Last updated: {lastUpdated}
+          Last updated: {nowMeta?.updated_at ? new Date(nowMeta.updated_at).toLocaleDateString() : 'Recently'}
         </div>
       </div>
 
@@ -59,39 +85,45 @@ export default function NowPage() {
           <Target className="h-6 w-6" />
           Current Projects
         </h2>
-        <div className="space-y-4">
-          {currentProjects.map((project, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="font-mono text-lg">{project.title}</CardTitle>
-                  <Badge variant="outline" className="font-mono text-xs">
-                    {project.status}
-                  </Badge>
-                </div>
-                <CardDescription className="font-mono">{project.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm font-mono">
-                    <span>Progress</span>
-                    <span>{project.progress}%</span>
+        {currentProjects.length === 0 ? (
+          <p className="font-mono text-muted-foreground">No current projects to display.</p>
+        ) : (
+          <div className="space-y-4">
+            {currentProjects.map((project) => (
+              <Card key={project.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="font-mono text-lg">{project.name}</CardTitle>
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {project.tag}
+                    </Badge>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${project.progress}%` }}
-                    />
+                  <CardDescription className="font-mono">{project.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm font-mono">
+                      <span>Progress</span>
+                      <span>{project.progress}%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${project.progress}%` }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <p className="font-mono text-sm text-muted-foreground flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {project.timeline}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  {project.comments && (
+                    <p className="font-mono text-sm text-muted-foreground flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {project.comments}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Currently Learning */}
@@ -101,14 +133,13 @@ export default function NowPage() {
           <CardDescription className="font-mono">Technologies and concepts I'm diving deep into</CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 font-mono text-sm">
-            {currentLearning.map((item, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+          {nowMeta?.currently_learning ? (
+            <div className="font-mono text-sm whitespace-pre-line leading-relaxed">
+              {nowMeta.currently_learning}
+            </div>
+          ) : (
+            <p className="font-mono text-sm text-muted-foreground">No learning items available</p>
+          )}
         </CardContent>
       </Card>
 
@@ -119,14 +150,13 @@ export default function NowPage() {
           <CardDescription className="font-mono">Books that are shaping my thinking</CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 font-mono text-sm">
-            {recentReads.map((book, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <span className="text-primary mt-1">📖</span>
-                {book}
-              </li>
-            ))}
-          </ul>
+          {nowMeta?.recent_reads ? (
+            <div className="font-mono text-sm whitespace-pre-line leading-relaxed">
+              {nowMeta.recent_reads}
+            </div>
+          ) : (
+            <p className="font-mono text-sm text-muted-foreground">No recent reads available</p>
+          )}
         </CardContent>
       </Card>
 
@@ -136,18 +166,26 @@ export default function NowPage() {
           <CardTitle className="font-mono text-xl">Current Philosophy</CardTitle>
         </CardHeader>
         <CardContent className="font-mono text-sm leading-relaxed space-y-4">
-          <p>
-            I believe in building systems that solve real problems. Every line of code should serve a purpose, and every
-            system should be designed with scalability and maintainability in mind.
-          </p>
-          <p>
-            Currently focused on the intersection of AI and practical applications, particularly in signal processing
-            and data analysis. The goal is to bridge the gap between research and real-world implementation.
-          </p>
-          <p>
-            Learning never stops. Every project teaches something new, every bug reveals a deeper understanding, and
-            every challenge is an opportunity to grow.
-          </p>
+          {nowMeta?.current_philosophy ? (
+            <div className="whitespace-pre-line">
+              {nowMeta.current_philosophy}
+            </div>
+          ) : (
+            <div>
+              <p>
+                I believe in building systems that solve real problems. Every line of code should serve a purpose, and every
+                system should be designed with scalability and maintainability in mind.
+              </p>
+              <p className="mt-4">
+                Currently focused on the intersection of AI and practical applications, particularly in signal processing
+                and data analysis. The goal is to bridge the gap between research and real-world implementation.
+              </p>
+              <p className="mt-4">
+                Learning never stops. Every project teaches something new, every bug reveals a deeper understanding, and
+                every challenge is an opportunity to grow.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

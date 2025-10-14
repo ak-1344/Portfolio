@@ -13,7 +13,6 @@ const navigation = [
   { name: "About", href: "/about" },
   { name: "Projects", href: "/projects" },
   { name: "Blogs", href: "/blogs" },
-  { name: "Gallery", href: "/gallery" },
   { name: "NOW", href: "/now" },
   { name: "Contact", href: "/contact" },
 ]
@@ -63,12 +62,12 @@ export function Navigation() {
             </Button>
 
             {/* Admin (desktop only) */}
-            <Link
+            {/* <Link
               href="/admin"
               className="hidden md:inline font-mono text-xs text-muted-foreground hover:text-primary"
             >
               &gt;_
-            </Link>
+            </Link> */}
 
             {/* Mobile Menu */}
             <Popover>

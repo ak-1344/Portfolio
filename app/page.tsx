@@ -164,7 +164,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="absolute -bottom-4 -right-4 font-mono text-sm text-muted-foreground bg-background border rounded px-2 py-1 group-hover:scale-110 transition-transform">
-                    ./ak.heic
+                    ./ak.jpeg
                   </div>
                 </div>
               </ParallaxCard>

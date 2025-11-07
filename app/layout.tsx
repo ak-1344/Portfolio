@@ -9,9 +9,15 @@ import { DynamicBackground } from "@/components/dynamic-background"
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Ak - Backend Developer",
-  description: "Backend Developer | Builder | Explorer",
-    generator: 'v0.dev'
+  title: "Ak (Portfolio)",
+  description: "Backend Developer | Leader | Explorer",
+  generator: 'Ak',
+  icons: {
+    icon: [
+      { url: '/icons8-portfolio-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons8-portfolio-64.png', sizes: '64x64', type: 'image/png' }
+    ]
+  }
 }
 
 export default function RootLayout({

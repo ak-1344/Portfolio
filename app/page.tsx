@@ -125,7 +125,7 @@ export default function HomePage() {
                   <Link href="#projects">Projects</Link>
                 </Button>
                 <Button asChild variant="outline" className="font-mono">
-                  <Link href="https://drive.google.com/file/d/18iy3XsQvZ6LdHnsSFQSnf_SeaWvNawv2/view">Resume</Link>
+                  <Link href="https://drive.google.com/file/d/18iy3XsQvZ6LdHnsSFQSnf_SeaWvNawv2/view" target="_blank" rel="noopener noreferrer">Resume</Link>
                 </Button>
               </div>
 

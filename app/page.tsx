@@ -108,8 +108,8 @@ export default function HomePage() {
                 <div className="font-mono text-xl md:text-2xl text-muted-foreground space-y-2">
                   <div> Developer | Builder | Explorer </div>
                   <div className="text-sm md:text-base mt-4 leading-relaxed">
-                    I build things out of curiosity, explore the tech world,
-                    <br /> and share my thoughts through blogs.
+                    I build projects out of curiosity, explore the tech world to have fun,
+                    <br /> and also enjoy leading and putting myself out in the world.
                   </div>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function HomePage() {
                   <Link href="#projects">Projects</Link>
                 </Button>
                 <Button asChild variant="outline" className="font-mono">
-                  <Link href="#contact">Contact</Link>
+                  <Link href="https://drive.google.com/file/d/18iy3XsQvZ6LdHnsSFQSnf_SeaWvNawv2/view">Resume</Link>
                 </Button>
               </div>
 

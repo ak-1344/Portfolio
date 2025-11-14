@@ -5,6 +5,7 @@ import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
 import { DynamicBackground } from "@/components/dynamic-background"
+import { Analytics } from "@vercel/analytics/next"
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] })
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           <DynamicBackground />
           <Navigation />
           <main className="pt-16 min-h-screen relative z-10">{children}</main>
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

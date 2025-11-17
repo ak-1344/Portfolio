@@ -6,23 +6,13 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/lib/supabaseClient"
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react"
+import type { Blog } from "@/types"
+import { getBlogReadTime, formatDate } from "@/lib/helpers"
 
 interface BlogPageProps {
   params: {
     id: string
   }
-}
-
-type BlogPost = {
-  id: string
-  title: string
-  summary: string
-  content: string
-  date: string
-  tags: string[]
-  cover_image: string
-  read_time: number
-  created_at?: string
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
@@ -31,22 +21,26 @@ export default async function BlogPage({ params }: BlogPageProps) {
     .from("blogs")
     .select("*")
     .eq("id", params.id)
-    .single()
+    .single<Blog>()
 
   if (!post || error) {
     console.error("Error fetching blog post:", error)
     notFound()
   }
 
+  const readTime = getBlogReadTime(post)
+
   // Fetch related posts based on tags
   const { data: allPosts } = await supabase
     .from("blogs")
     .select("*")
     .neq("id", post.id)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false })
   
   const relatedPosts = allPosts
     ? allPosts
-        .filter((p) => p.tags?.some((tag: string) => post.tags?.includes(tag)))
+        .filter((p: Blog) => p.tags?.some((tag: string) => post.tags?.includes(tag)))
         .slice(0, 3)
     : []
 
@@ -79,15 +73,15 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <div className="flex items-center gap-6 text-sm text-muted-foreground font-mono">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Ak
+                {post.author || "Ak"}
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {new Date(post.date || post.created_at || '').toLocaleDateString()}
+                {formatDate(post.created_at)}
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                {post.read_time} min read
+                {readTime} min read
               </div>
             </div>
 
@@ -102,8 +96,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </div>
 
         {/* Article Content */}
-        <div className="prose prose-neutral dark:prose-invert max-w-none font-mono">
-          <div className="whitespace-pre-wrap leading-relaxed">{post.content}</div>
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          <div className="font-mono preserve-whitespace leading-relaxed text-base">{post.content}</div>
         </div>
       </article>
 
@@ -112,11 +106,13 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <div className="mt-16 space-y-6">
           <h2 className="font-mono text-2xl font-bold">Related Posts</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedPosts.map((relatedPost) => (
+            {relatedPosts.map((relatedPost: Blog) => (
               <Card key={relatedPost.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle className="font-mono text-lg">{relatedPost.title}</CardTitle>
-                  <CardDescription className="font-mono text-sm">{relatedPost.summary}</CardDescription>
+                  <CardDescription className="font-mono text-sm preserve-whitespace line-clamp-2">
+                    {relatedPost.excerpt || relatedPost.summary || relatedPost.content.substring(0, 100)}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button size="sm" asChild className="font-mono">

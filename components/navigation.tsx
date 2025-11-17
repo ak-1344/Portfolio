@@ -13,6 +13,7 @@ const navigation = [
   { name: "About", href: "/about" },
   { name: "Projects", href: "/projects" },
   { name: "Blogs", href: "/blogs" },
+  { name: "Certifications", href: "/certifications" },
   { name: "NOW", href: "/now" },
   { name: "Contact", href: "/contact" },
 ]
@@ -93,7 +94,7 @@ export function Navigation() {
                     </Link>
                   ))}
 
-                  <div className="border-t pt-3 mt-2 space-y-2">
+                  <div className="border-t pt-3 mt-2">
                     <Button
                       variant="ghost"
                       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -109,12 +110,6 @@ export function Navigation() {
                         </>
                       )}
                     </Button>
-                    <Link
-                      href="/admin"
-                      className="block text-xs text-muted-foreground hover:text-primary"
-                    >
-                      &gt;_ Admin
-                    </Link>
                   </div>
                 </div>
               </PopoverContent>

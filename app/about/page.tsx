@@ -1,8 +1,12 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-// import { ActivityHeatmap } from "@/components/activity-heatmap"
+import { supabase } from "@/lib/supabaseClient"
+import type { NowProject } from "@/types"
 
 const skills = {
   Backend: ["Node.js", "Express", "Python", "PostgreSQL", "MongoDB"],
@@ -35,9 +39,26 @@ const timeline = [
 ]
 
 export default function AboutPage() {
+  const [currentProjects, setCurrentProjects] = useState<NowProject[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCurrentProjects = async () => {
+      const { data } = await supabase
+        .from("now_projects")
+        .select("*")
+        .order("display_order", { ascending: true })
+        .limit(3)
+      
+      setCurrentProjects(data || [])
+      setLoading(false)
+    }
+    fetchCurrentProjects()
+  }, [])
+
   return (
-    <div className="container mx-auto px-4 py-12 space-y-12">
-      <div className="space-y-4">
+    <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="space-y-8 md:space-y-12">
         <h1 className="font-mono text-4xl font-bold">About Me</h1>
         <p className="font-mono text-muted-foreground text-lg">
           Backend developer passionate about building scalable systems and exploring AI.
@@ -121,11 +142,29 @@ export default function AboutPage() {
           <CardDescription className="font-mono">What I'm focused on right now</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="font-mono text-sm space-y-2">
-            <p>• EEG ML project for signal classification</p>
-            <p>• Nexus Club website development</p>
-            <p>• Backend system architecture research</p>
-          </div>
+          {loading ? (
+            <div className="font-mono text-sm text-muted-foreground">Loading current projects...</div>
+          ) : currentProjects.length > 0 ? (
+            <div className="font-mono text-sm space-y-3">
+              {currentProjects.map((project) => (
+                <div key={project.id} className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <div className="flex-1">
+                    <span className="font-semibold">{project.name}</span>
+                    {project.progress > 0 && (
+                      <span className="text-muted-foreground ml-2">({project.progress}%)</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="font-mono text-sm space-y-2">
+              <p>• Building scalable backend systems</p>
+              <p>• Exploring AI and ML applications</p>
+              <p>• Contributing to open source projects</p>
+            </div>
+          )}
           <Button asChild variant="outline" className="font-mono">
             <Link href="/now">View Full NOW Page →</Link>
           </Button>

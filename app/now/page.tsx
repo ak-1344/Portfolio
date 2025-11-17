@@ -5,28 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, Target } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
-
-type CurrentProject = {
-  id: string
-  name: string
-  description: string
-  tag: string
-  progress: number
-  comments?: string
-  created_at: string
-  updated_at: string
-}
-
-type NowMeta = {
-  id: string
-  currently_learning: string
-  recent_reads: string
-  current_philosophy: string
-  updated_at: string
-}
+import type { NowProject, NowMeta } from "@/types"
+import { formatDate } from "@/lib/helpers"
 
 export default function NowPage() {
-  const [currentProjects, setCurrentProjects] = useState<CurrentProject[]>([])
+  const [currentProjects, setCurrentProjects] = useState<NowProject[]>([])
   const [nowMeta, setNowMeta] = useState<NowMeta | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -34,13 +17,14 @@ export default function NowPage() {
     const fetchNowData = async () => {
       setLoading(true)
       
-      // Fetch current projects from now_projects table
+      // Fetch current projects with display_order
       const { data: projectsData, error: projectsError } = await supabase
         .from("now_projects")
         .select("*")
+        .order("display_order", { ascending: true })
         .order("updated_at", { ascending: false })
       
-      // Fetch now meta data from now_meta table
+      // Fetch now meta data
       const { data: metaData, error: metaError } = await supabase
         .from("now_meta")
         .select("*")
@@ -69,13 +53,13 @@ export default function NowPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl space-y-12">
+    <div className="container mx-auto px-4 py-12 md:py-16 max-w-4xl space-y-8 md:space-y-12">
       <div className="space-y-4">
-        <h1 className="font-mono text-4xl font-bold">NOW</h1>
-        <p className="font-mono text-muted-foreground text-lg">What I'm currently focused on and working towards.</p>
+        <h1 className="font-mono text-3xl md:text-4xl font-bold">NOW</h1>
+        <p className="font-mono text-muted-foreground text-base md:text-lg">What I'm currently focused on and working towards.</p>
         <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
           <Clock className="h-4 w-4" />
-          Last updated: {nowMeta?.updated_at ? new Date(nowMeta.updated_at).toLocaleDateString() : 'Recently'}
+          Last updated: {nowMeta?.updated_at ? formatDate(nowMeta.updated_at) : 'Recently'}
         </div>
       </div>
 
@@ -98,7 +82,7 @@ export default function NowPage() {
                       {project.tag}
                     </Badge>
                   </div>
-                  <CardDescription className="font-mono">{project.description}</CardDescription>
+                  <CardDescription className="font-mono preserve-whitespace">{project.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
@@ -114,7 +98,7 @@ export default function NowPage() {
                     </div>
                   </div>
                   {project.comments && (
-                    <p className="font-mono text-sm text-muted-foreground flex items-center gap-2">
+                    <p className="font-mono text-sm text-muted-foreground flex items-center gap-2 preserve-whitespace">
                       <Calendar className="h-4 w-4" />
                       {project.comments}
                     </p>
@@ -134,7 +118,7 @@ export default function NowPage() {
         </CardHeader>
         <CardContent>
           {nowMeta?.currently_learning ? (
-            <div className="font-mono text-sm whitespace-pre-line leading-relaxed">
+            <div className="font-mono text-sm preserve-whitespace leading-relaxed">
               {nowMeta.currently_learning}
             </div>
           ) : (
@@ -151,7 +135,7 @@ export default function NowPage() {
         </CardHeader>
         <CardContent>
           {nowMeta?.recent_reads ? (
-            <div className="font-mono text-sm whitespace-pre-line leading-relaxed">
+            <div className="font-mono text-sm preserve-whitespace leading-relaxed">
               {nowMeta.recent_reads}
             </div>
           ) : (
@@ -167,7 +151,7 @@ export default function NowPage() {
         </CardHeader>
         <CardContent className="font-mono text-sm leading-relaxed space-y-4">
           {nowMeta?.current_philosophy ? (
-            <div className="whitespace-pre-line">
+            <div className="preserve-whitespace">
               {nowMeta.current_philosophy}
             </div>
           ) : (

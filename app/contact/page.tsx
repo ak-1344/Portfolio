@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Github, Linkedin, Mail, Send } from "lucide-react"
+import { Github, Linkedin, Mail, Send, CheckCircle, AlertCircle } from "lucide-react"
+import { supabase } from "@/lib/supabaseClient"
+import { isValidEmail } from "@/lib/helpers"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -18,13 +20,63 @@ export default function ContactPage() {
     reason: "",
     message: "",
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log("Form submitted:", formData)
-    // Reset form
-    setFormData({ name: "", email: "", reason: "", message: "" })
+    
+    // Reset status
+    setSubmitStatus("idle")
+    setErrorMessage("")
+
+    // Validation
+    if (!formData.name.trim()) {
+      setSubmitStatus("error")
+      setErrorMessage("Please enter your name")
+      return
+    }
+    if (!isValidEmail(formData.email)) {
+      setSubmitStatus("error")
+      setErrorMessage("Please enter a valid email address")
+      return
+    }
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      setSubmitStatus("error")
+      setErrorMessage("Message must be at least 10 characters long")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert([
+          {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            subject: formData.reason || null,
+            message: formData.message.trim(),
+            status: "unread"
+          }
+        ])
+
+      if (error) {
+        console.error("Supabase error:", error)
+        throw error
+      }
+
+      setSubmitStatus("success")
+      setFormData({ name: "", email: "", reason: "", message: "" })
+    } catch (error: any) {
+      console.error("Error submitting contact form:", error)
+      setSubmitStatus("error")
+      setErrorMessage(error?.message || "Failed to send message. Please try again or email directly.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -33,12 +85,12 @@ export default function ContactPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <div className="grid lg:grid-cols-2 gap-12 items-start">
+      <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-start">
         {/* Left Side - Contact Form */}
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="font-mono text-4xl font-bold">Get In Touch</h1>
-            <p className="font-mono text-muted-foreground text-lg">Let's build something amazing together.</p>
+            <h1 className="font-mono text-3xl md:text-4xl font-bold">Get In Touch</h1>
+            <p className="font-mono text-muted-foreground text-base md:text-lg">Let's build something amazing together.</p>
           </div>
 
           <Card>
@@ -48,7 +100,7 @@ export default function ContactPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="font-mono">
                       Name
@@ -59,6 +111,7 @@ export default function ContactPage() {
                       onChange={(e) => handleInputChange("name", e.target.value)}
                       className="font-mono"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div className="space-y-2">
@@ -72,15 +125,20 @@ export default function ContactPage() {
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       className="font-mono"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="reason" className="font-mono">
-                    Reason
+                    Reason (Optional)
                   </Label>
-                  <Select value={formData.reason} onValueChange={(value) => handleInputChange("reason", value)}>
+                  <Select 
+                    value={formData.reason} 
+                    onValueChange={(value) => handleInputChange("reason", value)}
+                    disabled={isSubmitting}
+                  >
                     <SelectTrigger className="font-mono">
                       <SelectValue placeholder="Select a reason" />
                     </SelectTrigger>
@@ -115,12 +173,33 @@ export default function ContactPage() {
                     className="font-mono min-h-[120px]"
                     placeholder="Tell me about your project or idea..."
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                <Button type="submit" className="w-full font-mono">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Message
+                {/* Status Messages */}
+                {submitStatus === "success" && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <p className="font-mono text-sm">Message sent successfully! I'll get back to you soon.</p>
+                  </div>
+                )}
+                {submitStatus === "error" && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600">
+                    <AlertCircle className="h-5 w-5" />
+                    <p className="font-mono text-sm">{errorMessage}</p>
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full font-mono" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>Sending...</>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Message
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>
@@ -136,18 +215,18 @@ export default function ContactPage() {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <a
-                  href="mailto:ak@example.com"
+                  href="mailto:adityakhatkar97.3@gmail.com"
                   className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
                 >
                   <Mail className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium">Email</div>
-                    <div className="text-sm text-muted-foreground">ak@example.com</div>
+                    <div className="text-sm text-muted-foreground">adityakhatkar97.3@gmail.com</div>
                   </div>
                 </a>
 
                 <a
-                  href="https://github.com"
+                  href="https://github.com/ak-1344"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
@@ -155,12 +234,12 @@ export default function ContactPage() {
                   <Github className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium">GitHub</div>
-                    <div className="text-sm text-muted-foreground">@ak-dev</div>
+                    <div className="text-sm text-muted-foreground">@ak-1344</div>
                   </div>
                 </a>
 
                 <a
-                  href="https://linkedin.com"
+                  href="https://linkedin.com/in/aditya1344"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors font-mono"
@@ -168,7 +247,7 @@ export default function ContactPage() {
                   <Linkedin className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium">LinkedIn</div>
-                    <div className="text-sm text-muted-foreground">Ak Developer</div>
+                    <div className="text-sm text-muted-foreground">Aditya</div>
                   </div>
                 </a>
               </div>

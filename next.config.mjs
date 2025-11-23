@@ -8,7 +8,9 @@ const nextConfig = {
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
   },
-  // Empty Turbopack config to acknowledge we're using Turbopack
+  // Updated for Next.js 16: moved from experimental
+  serverExternalPackages: ['sharp'],
+  // Empty turbopack config to use Turbopack without custom webpack
   turbopack: {},
   // Optimize for production
   compress: true,

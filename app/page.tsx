@@ -154,7 +154,7 @@ export default function HomePage() {
                   <span className="text-primary">$</span> whoami
                 </div>
                 <h1 className="font-mono text-4xl md:text-6xl font-bold">
-                  Hey, I'm <span className="text-primary">Ak</span>.
+                  Hey, I'm <span className="text-primary">Aditya</span>.
                 </h1>
                 <div className="font-mono text-xl md:text-2xl text-muted-foreground space-y-2">
                   <div> Developer | Builder | Explorer </div>
@@ -207,7 +207,7 @@ export default function HomePage() {
                     <div className="w-full h-full rounded-full overflow-hidden bg-muted">
                       <Image
                         src="/profilePic.jpg"
-                        alt="Ak's Profile"
+                        alt="Aditya's Profile"
                         width={320}
                         height={320}
                         className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
@@ -215,7 +215,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="absolute -bottom-4 -right-4 font-mono text-sm text-muted-foreground bg-background border rounded px-2 py-1 group-hover:scale-110 transition-transform">
-                    ./ak.jpeg
+                    ./aditya.jpeg
                   </div>
                 </div>
               </ParallaxCard>
@@ -606,7 +606,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="font-mono text-sm text-muted-foreground">
-              © 2025 Ak. Built with passion and curiosity ☕
+              © 2025 Aditya. Built with passion and curiosity ☕
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" asChild>

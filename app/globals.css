@@ -12,6 +12,8 @@
     --popover-foreground: 0 0% 3.9%;
     --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
+    --primary-rgb: 23, 23, 23;
+    --glow-rgb: 59, 130, 246;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
@@ -40,6 +42,8 @@
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
+    --primary-rgb: 250, 250, 250;
+    --glow-rgb: 250, 250, 250;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
@@ -64,7 +68,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
@@ -129,7 +133,77 @@ canvas {
 
 /* Section spacing and animations */
 section {
-  scroll-margin-top: 80px;
+  scroll-margin-top: 100px;
+}
+
+/* Glassy navbar effect */
+nav {
+  -webkit-backdrop-filter: blur(16px);
+}
+
+@supports (backdrop-filter: blur(16px)) {
+  nav {
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* Enhanced glowing border effect */
+@media (min-width: 768px) {
+  /* Light mode navbar with blue/cyan glow */
+  nav {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.25),
+                0 0 60px rgba(59, 130, 246, 0.12),
+                0 1px 0 rgba(59, 130, 246, 0.1) inset,
+                0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Dark mode navbar with white glow */
+  .dark nav {
+    box-shadow: 0 0 30px rgba(250, 250, 250, 0.2), 
+                0 0 60px rgba(250, 250, 250, 0.12),
+                0 1px 0 rgba(250, 250, 250, 0.15) inset,
+                0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Better section spacing with visual separation */
+section:not(:first-child) {
+  @apply mt-16 md:mt-24 lg:mt-32;
+}
+
+section .container {
+  @apply py-12 md:py-16 lg:py-20;
+}
+
+/* Journey Timeline Styles */
+.journey-timeline {
+  @apply relative space-y-8;
+}
+
+.journey-timeline::before {
+  content: '';
+  @apply absolute inset-0 ml-5 md:ml-8 h-full w-0.5;
+  background: linear-gradient(to bottom, 
+    hsl(var(--primary) / 0.5) 0%, 
+    hsl(var(--primary) / 0.3) 50%, 
+    transparent 100%);
+}
+
+.journey-item {
+  @apply relative flex gap-4 md:gap-6;
+}
+
+.journey-icon {
+  @apply relative z-10 flex h-10 w-10 md:h-16 md:w-16 items-center justify-center rounded-full;
+  @apply bg-primary/10 border-2 border-primary shadow-lg;
+}
+
+.journey-icon.active {
+  @apply animate-pulse;
+}
+
+.journey-content {
+  @apply flex-1 pb-8;
 }
 
 /* Card tilt effects */

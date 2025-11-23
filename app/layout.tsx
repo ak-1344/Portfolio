@@ -1,38 +1,53 @@
 import type React from "react"
-import type { Metadata } from "next"
-import { JetBrains_Mono } from "next/font/google"
+import { Inter, JetBrains_Mono } from "next/font/google"
 import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
-import { DynamicBackground } from "@/components/dynamic-background"
+import { DynamicBackgroundWrapper } from "@/components/dynamic-background-wrapper"
+import { Terminal } from "@/components/terminal"
 import { Analytics } from "@vercel/analytics/next"
+import { generateMetadata } from "@/lib/seo"
+import { StructuredData } from "@/components/structured-data"
+import { generatePersonSchema, generateWebSiteSchema } from "@/lib/structured-data"
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] })
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
-export const metadata: Metadata = {
-  title: "Ak (Portfolio)",
-  description: "Backend Developer | Leader | Explorer",
-  generator: 'Ak',
-  icons: {
-    icon: [
-      { url: '/icons8-portfolio-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icons8-portfolio-64.png', sizes: '64x64', type: 'image/png' }
-    ]
-  }
-}
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ["latin"],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+})
+
+export const metadata = generateMetadata({
+  title: 'Home',
+  description: 'Backend Developer from VIT Chennai (8.74 CGPA) specializing in scalable systems, Node.js, Python, PostgreSQL. Nexus Club President. Explore projects in AI/ML, Docker, AWS & more.',
+})
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const personSchema = generatePersonSchema()
+  const websiteSchema = generateWebSiteSchema()
+  
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={jetbrainsMono.className}>
+      <head>
+        <link rel="canonical" href="https://adityak.dev" />
+        <StructuredData data={personSchema} />
+        <StructuredData data={websiteSchema} />
+      </head>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <DynamicBackground />
+          <DynamicBackgroundWrapper />
           <Navigation />
           <main className="pt-16 min-h-screen relative z-10">{children}</main>
+          <Terminal />
           <Analytics />
         </ThemeProvider>
       </body>

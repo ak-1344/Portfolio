@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -11,8 +8,36 @@ const nextConfig = {
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
   },
-  experimental: {
-    disableOptimizedLoading: true,
+  // Empty Turbopack config to acknowledge we're using Turbopack
+  turbopack: {},
+  // Optimize for production
+  compress: true,
+  poweredByHeader: false,
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+        ],
+      },
+    ]
   },
 }
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
@@ -21,28 +22,63 @@ const navigation = [
 export function Navigation() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Show navbar when at top or scrolling up
+      if (currentScrollY < 10) {
+        setIsVisible(true)
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false)
+      }
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [lastScrollY])
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-3">
+    <nav 
+      className={cn(
+        "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
+        isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0",
+        // Floating card with fully rounded sides (pill shape)
+        "rounded-full backdrop-blur-md shadow-lg",
+        // Desktop: 75% width, glassy translucent background
+        "w-[95%] md:w-[75%] lg:w-[70%]",
+        // Truly translucent background - no solid colors
+        "bg-background/10 border border-primary/20",
+        // Light theme: cyan/blue glow, Dark theme: white glow
+        "shadow-[0_0_20px_rgba(var(--glow-rgb),0.2)]"
+      )}
+    >
+      <div className="px-4 md:px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 font-mono">
-            <Terminal className="h-5 w-5" />
-            <span className="font-bold">ak@dev:~$</span>
+          <Link href="/" className="flex items-center space-x-2 font-mono group">
+            <Terminal className="h-5 w-5 transition-colors group-hover:text-primary" />
+            <span className="font-bold transition-colors group-hover:text-primary">ak@dev:~$</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "font-mono text-sm transition-colors hover:text-primary",
+                  "font-mono text-sm transition-all hover:text-primary relative",
                   pathname === item.href
-                    ? "text-primary border-b border-primary"
-                    : "text-muted-foreground"
+                    ? "text-primary font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-full"
+                    : "text-foreground/80 hover:text-foreground"
                 )}
               >
                 {item.name}

@@ -90,7 +90,7 @@ export default function ContactPage() {
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="font-mono text-3xl md:text-4xl font-bold">Get In Touch</h1>
-            <p className="font-mono text-muted-foreground text-base md:text-lg">Let's build something amazing together.</p>
+            {/* <p className="font-mono text-muted-foreground text-base md:text-lg">Let's build something amazing together.</p> */}
           </div>
 
           <Card>
@@ -266,7 +266,7 @@ export default function ContactPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="font-mono">Response Time</CardTitle>
             </CardHeader>
@@ -284,7 +284,7 @@ export default function ContactPage() {
                 <span className="text-primary">2-3 days</span>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>

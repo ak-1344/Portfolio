@@ -4,6 +4,7 @@ import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
 import { DynamicBackground } from "@/components/dynamic-background"
+import { Terminal } from "@/components/terminal"
 import { Analytics } from "@vercel/analytics/next"
 import { generateMetadata } from "@/lib/seo"
 import { StructuredData } from "@/components/structured-data"
@@ -46,6 +47,7 @@ export default function RootLayout({
           <DynamicBackground />
           <Navigation />
           <main className="pt-16 min-h-screen relative z-10">{children}</main>
+          <Terminal />
           <Analytics />
         </ThemeProvider>
       </body>

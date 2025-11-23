@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
@@ -21,15 +22,48 @@ const navigation = [
 export function Navigation() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Show navbar when at top or scrolling up
+      if (currentScrollY < 10) {
+        setIsVisible(true)
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false)
+      }
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [lastScrollY])
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm">
+    <nav 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-transform duration-300",
+        isVisible ? "translate-y-0" : "-translate-y-full",
+        // Glassy effect with borders
+        "border-b backdrop-blur-md",
+        // Desktop: 80% transparency with glowing border
+        "md:bg-background/20 md:border-primary/30 md:shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]",
+        // Mobile: more opaque
+        "bg-background/95 border-border/50"
+      )}
+    >
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 font-mono">
-            <Terminal className="h-5 w-5" />
-            <span className="font-bold">ak@dev:~$</span>
+          <Link href="/" className="flex items-center space-x-2 font-mono group">
+            <Terminal className="h-5 w-5 transition-colors group-hover:text-primary" />
+            <span className="font-bold transition-colors group-hover:text-primary">ak@dev:~$</span>
           </Link>
 
           {/* Desktop Navigation */}

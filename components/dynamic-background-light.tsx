@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { useTheme } from "next-themes"
 
 interface Particle {
   x: number
@@ -12,11 +11,10 @@ interface Particle {
   opacity: number
 }
 
-export function DynamicBackground() {
+export function DynamicBackgroundLight() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
   const mouseRef = useRef({ x: 0, y: 0 })
-  const { theme } = useTheme()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -50,30 +48,31 @@ export function DynamicBackground() {
     const drawParticles = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-      if (theme === "dark") {
-        gradient.addColorStop(0, "rgba(0, 0, 0, 0.02)")
-        gradient.addColorStop(0.5, "rgba(20, 20, 20, 0.01)")
-        gradient.addColorStop(1, "rgba(0, 0, 0, 0.02)")
-      } else {
-        gradient.addColorStop(0, "rgba(250, 250, 250, 0.02)")
-        gradient.addColorStop(0.5, "rgba(240, 240, 240, 0.01)")
-        gradient.addColorStop(1, "rgba(250, 250, 250, 0.02)")
-      }
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Define colorful particles for light theme
+      const lightColors = [
+        { r: 59, g: 130, b: 246 },   // Blue
+        { r: 168, g: 85, b: 247 },   // Purple
+        { r: 239, g: 68, b: 68 },    // Red
+        { r: 34, g: 197, b: 94 },    // Green
+        { r: 251, g: 191, b: 36 },   // Yellow
+        { r: 236, g: 72, b: 153 },   // Pink
+      ]
 
       // Draw particles
-      particlesRef.current.forEach((particle) => {
+      particlesRef.current.forEach((particle, index) => {
         ctx.beginPath()
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        ctx.fillStyle =
-          theme === "dark" ? `rgba(255, 255, 255, ${particle.opacity})` : `rgba(0, 0, 0, ${particle.opacity})`
+        
+        // Colorful light theme particles
+        const color = lightColors[index % lightColors.length]
+        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${particle.opacity * 1.5})`
+        ctx.shadowBlur = 10
+        ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, 0.5)`
         ctx.fill()
+        ctx.shadowBlur = 0
 
         // Draw connections
-        particlesRef.current.forEach((otherParticle) => {
+        particlesRef.current.forEach((otherParticle, otherIndex) => {
           const dx = particle.x - otherParticle.x
           const dy = particle.y - otherParticle.y
           const distance = Math.sqrt(dx * dx + dy * dy)
@@ -82,10 +81,10 @@ export function DynamicBackground() {
             ctx.beginPath()
             ctx.moveTo(particle.x, particle.y)
             ctx.lineTo(otherParticle.x, otherParticle.y)
-            ctx.strokeStyle =
-              theme === "dark"
-                ? `rgba(255, 255, 255, ${0.1 * (1 - distance / 100)})`
-                : `rgba(0, 0, 0, ${0.1 * (1 - distance / 100)})`
+            
+            // Colorful light theme connections
+            const color = lightColors[index % lightColors.length]
+            ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${0.15 * (1 - distance / 100)})`
             ctx.lineWidth = 0.5
             ctx.stroke()
           }
@@ -138,9 +137,12 @@ export function DynamicBackground() {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("resize", handleResize)
     }
-  }, [theme])
+  }, [])
 
   return (
-    <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" style={{ background: "transparent" }} />
+    <>
+      <div className="fixed inset-0 -z-10 bg-[linear-gradient(-45deg,#f0f9ff,#fef3f9,#f0fdf4,#fefce8)] animate-gradient-xy" />
+      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" style={{ background: "transparent" }} />
+    </>
   )
 }

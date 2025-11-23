@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
-import { DynamicBackground } from "@/components/dynamic-background"
+import { DynamicBackgroundWrapper } from "@/components/dynamic-background-wrapper"
 import { Terminal } from "@/components/terminal"
 import { Analytics } from "@vercel/analytics/next"
 import { generateMetadata } from "@/lib/seo"
@@ -44,7 +44,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <DynamicBackground />
+          <DynamicBackgroundWrapper />
           <Navigation />
           <main className="pt-16 min-h-screen relative z-10">{children}</main>
           <Terminal />

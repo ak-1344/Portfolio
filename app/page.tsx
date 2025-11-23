@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ParallaxCard } from "@/components/parallax-card"
 import { CertificationCard } from "@/components/certification-card"
+import { ResumeButton } from "@/components/pdf-viewer"
 // import { ActivityHeatmap } from "@/components/activity-heatmap"
 import { Github, Linkedin, Mail, ArrowRight, Send, Pin, CheckCircle, AlertCircle, Award } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -175,9 +176,7 @@ export default function HomePage() {
                 <Button asChild variant="outline" className="font-mono">
                   <Link href="#projects">Projects</Link>
                 </Button>
-                <Button asChild variant="outline" className="font-mono">
-                  <Link href="https://drive.google.com/file/d/18iy3XsQvZ6LdHnsSFQSnf_SeaWvNawv2/view" target="_blank" rel="noopener noreferrer">Resume</Link>
-                </Button>
+                <ResumeButton variant="outline" className="font-mono" />
               </div>
 
               <div className="flex space-x-4 pt-4">

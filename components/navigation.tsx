@@ -48,17 +48,19 @@ export function Navigation() {
   return (
     <nav 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-transform duration-300",
-        isVisible ? "translate-y-0" : "-translate-y-full",
-        // Glassy effect with borders
-        "border-b backdrop-blur-md",
-        // Desktop: 80% transparency with glowing border
-        "md:bg-background/20 md:border-primary/30 md:shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]",
-        // Mobile: more opaque
-        "bg-background/95 border-border/50"
+        "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
+        isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0",
+        // Floating card with fully rounded sides (pill shape)
+        "rounded-full backdrop-blur-md shadow-lg",
+        // Desktop: 75% width, glassy translucent background
+        "w-[95%] md:w-[75%] lg:w-[70%]",
+        // Truly translucent background - no solid colors
+        "bg-background/10 border border-primary/20",
+        // Light theme: cyan/blue glow, Dark theme: white glow
+        "shadow-[0_0_20px_rgba(var(--glow-rgb),0.2)]"
       )}
     >
-      <div className="container mx-auto px-4 py-3">
+      <div className="px-4 md:px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 font-mono group">
@@ -67,16 +69,16 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "font-mono text-sm transition-colors hover:text-primary",
+                  "font-mono text-sm transition-all hover:text-primary relative",
                   pathname === item.href
-                    ? "text-primary border-b border-primary"
-                    : "text-muted-foreground"
+                    ? "text-primary font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-full"
+                    : "text-foreground/80 hover:text-foreground"
                 )}
               >
                 {item.name}

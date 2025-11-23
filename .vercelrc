@@ -1,3 +1,4 @@
 {
-  "buildCommand": "NEXT_SHARP_PATH=/tmp/noop-sharp pnpm build"
+  "buildCommand": "NEXT_SHARP_PATH=/tmp/noop-sharp pnpm build",
+  "framework": "nextjs"
 }

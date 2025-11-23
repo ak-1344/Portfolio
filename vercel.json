@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "NEXT_SHARP_PATH=/tmp/noop-sharp pnpm build",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_SHARP_PATH": "/tmp/noop-sharp"
+  },
+  "build": {
+    "env": {
+      "NEXT_SHARP_PATH": "/tmp/noop-sharp"
+    }
+  }
+}

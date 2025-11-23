@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,21 +7,9 @@ const nextConfig = {
     unoptimized: true,
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
-    formats: ['image/webp'],
   },
-  experimental: {
-    disableOptimizedLoading: true,
-  },
-  // Disable Sharp to prevent SIGILL errors
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        sharp$: false,
-      }
-    }
-    return config
-  },
+  // Empty Turbopack config to acknowledge we're using Turbopack
+  turbopack: {},
   // Optimize for production
   compress: true,
   poweredByHeader: false,

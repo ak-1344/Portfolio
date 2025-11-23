@@ -12,29 +12,30 @@ const skills = {
   Backend: ["Node.js", "Express", "Python", "PostgreSQL", "MongoDB"],
   Frontend: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
   DevOps: ["Docker", "Linux", "Proxmox", "AWS", "CI/CD"],
-  ML: ["Pandas", "scikit-learn", "EEG Processing", "TensorFlow"],
+  ML: ["Pandas", "scikit-learn", "Numpy", "ML Models"],
 }
 
 const timeline = [
   {
-    year: "2024",
-    title: "ML Research Intern",
-    description: "EEG signal processing and machine learning research",
+    period: "2023 - Present",
+    title: "VIT Chennai",
+    subtitle: "B.Tech Computer Science (Core)",
+    description: "Currently maintaining 8.74 CGPA. Serving as Nexus Club President - a backend-oriented club. Developer by hobby, explorer by passion. Actively involved in building scalable systems and mentoring peers in backend development.",
+    icon: "🎓",
   },
   {
-    year: "2023",
-    title: "Club Leadership",
-    description: "Led technical initiatives and mentored junior developers",
+    period: "2022 - 2023",
+    title: "Gap Year Journey",
+    subtitle: "NDA Preparation & SSB",
+    description: "Cleared NDA exam twice. Conference OUT in SSB Mysore. A year of discipline, determination, and self-discovery that shaped my resilience and problem-solving approach.",
+    icon: "🎯",
   },
   {
-    year: "2022",
-    title: "Backend Development",
-    description: "Started focusing on scalable system architecture",
-  },
-  {
-    year: "2021",
-    title: "Started Journey",
-    description: "Began exploring computer science and programming",
+    period: "2018 - 2022",
+    title: "Sainik School Kunjpura",
+    subtitle: "Secondary Education",
+    description: "Foundation years that instilled discipline, leadership qualities, and a structured approach to challenges. Developed strong fundamentals and time management skills.",
+    icon: "🏫",
   },
 ]
 
@@ -58,7 +59,7 @@ export default function AboutPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="space-y-8 md:space-y-12">
+      <div className="space-y-8 md:space-y-12 mb-16">
         <h1 className="font-mono text-4xl font-bold">About Me</h1>
         <p className="font-mono text-muted-foreground text-lg">
           Backend developer passionate about building scalable systems and exploring AI.
@@ -66,6 +67,7 @@ export default function AboutPage() {
       </div>
 
       {/* Summary Card */}
+      <div className="mb-16 md:mb-20">
       <Card>
         <CardHeader>
           <CardTitle className="font-mono">Background</CardTitle>
@@ -84,22 +86,46 @@ export default function AboutPage() {
       </Card>
 
       {/* Timeline */}
-      <div className="space-y-6">
+      <div className="space-y-6 mb-16 md:mb-20">
         <h2 className="font-mono text-2xl font-bold">Journey</h2>
-        <div className="space-y-4">
+        <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/50 before:via-primary/30 before:to-transparent md:before:ml-8">
           {timeline.map((item, index) => (
-            <div key={index} className="flex gap-4 border-l-2 border-primary/20 pl-4 pb-4">
-              <div className="flex-shrink-0">
-                <div className="w-3 h-3 bg-primary rounded-full -ml-6 mt-2"></div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="font-mono text-xs">
-                    {item.year}
-                  </Badge>
-                  <h3 className="font-mono font-semibold">{item.title}</h3>
+            <div key={index} className="relative flex gap-4 md:gap-6">
+              {/* Timeline dot with pulse animation */}
+              <div className="relative flex items-start pt-1.5">
+                <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 border-2 border-primary shadow-lg md:h-16 md:w-16">
+                  <span className="text-xl md:text-3xl">{item.icon}</span>
+                  {index === 0 && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/20 opacity-75"></span>
+                  )}
                 </div>
-                <p className="font-mono text-sm text-muted-foreground">{item.description}</p>
+              </div>
+              
+              {/* Content card */}
+              <div className="flex-1 pb-8">
+                <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] duration-300">
+                  <CardHeader className="space-y-1 pb-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="font-mono text-xs">
+                        {item.period}
+                      </Badge>
+                      {index === 0 && (
+                        <Badge variant="default" className="font-mono text-xs animate-pulse">
+                          Current
+                        </Badge>
+                      )}
+                    </div>
+                    <CardTitle className="font-mono text-lg md:text-xl">{item.title}</CardTitle>
+                    <CardDescription className="font-mono text-sm font-semibold text-primary/80">
+                      {item.subtitle}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-mono text-sm leading-relaxed text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           ))}
@@ -107,7 +133,7 @@ export default function AboutPage() {
       </div>
 
       {/* Skills */}
-      <div className="space-y-6">
+      <div className="space-y-6 mb-16 md:mb-20">
         <h2 className="font-mono text-2xl font-bold">Skills</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {Object.entries(skills).map(([category, items]) => (
@@ -170,6 +196,7 @@ export default function AboutPage() {
           </Button>
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import type React from "react"
-import { JetBrains_Mono } from "next/font/google"
+import { Inter, JetBrains_Mono } from "next/font/google"
 import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
@@ -8,6 +8,12 @@ import { Analytics } from "@vercel/analytics/next"
 import { generateMetadata } from "@/lib/seo"
 import { StructuredData } from "@/components/structured-data"
 import { generatePersonSchema, generateWebSiteSchema } from "@/lib/structured-data"
+
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 const jetbrainsMono = JetBrains_Mono({ 
   subsets: ["latin"],
@@ -35,7 +41,7 @@ export default function RootLayout({
         <StructuredData data={personSchema} />
         <StructuredData data={websiteSchema} />
       </head>
-      <body className={jetbrainsMono.className}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <DynamicBackground />
           <Navigation />

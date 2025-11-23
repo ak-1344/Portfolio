@@ -20,6 +20,30 @@ import { formatDate, isValidEmail } from "@/lib/helpers"
 
 const skills = ["Node.js", "Python", "PostgreSQL", "Docker", "Next.js", "Machine Learning", "AWS", "Linux"]
 
+const timeline = [
+  {
+    period: "2023 - Present",
+    title: "VIT Chennai",
+    subtitle: "B.Tech Computer Science",
+    description: "8.74 CGPA • Nexus Club President",
+    icon: "🎓",
+  },
+  {
+    period: "2022 - 2023",
+    title: "Gap Year",
+    subtitle: "NDA & SSB",
+    description: "Cleared NDA twice • Conference OUT at SSB Mysore",
+    icon: "🎯",
+  },
+  {
+    period: "2018 - 2022",
+    title: "Sainik School Kunjpura",
+    subtitle: "Secondary Education",
+    description: "Foundation in discipline and leadership",
+    icon: "🏫",
+  },
+]
+
 export default function HomePage() {
   const [pinnedProjects, setPinnedProjects] = useState<Project[]>([])
   const [recentProjects, setRecentProjects] = useState<Project[]>([])
@@ -224,7 +248,7 @@ export default function HomePage() {
       </section>
 
       {/* About Me Section */}
-      <section id="about" className="py-12 md:py-24 relative">
+      <section id="about" className="py-16 md:py-24 relative">
         <div className="container mx-auto px-4 space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
             <h2 className="font-mono text-3xl md:text-4xl font-bold">About Me</h2>
@@ -233,37 +257,74 @@ export default function HomePage() {
             </p>
           </div>
 
-            <div className="flex justify-center">
-            <div className="w-full max-w-3xl px-4 md:px-0" style={{ width: "100%", maxWidth: "min(90vw, 48rem)" }}>
-              <ParallaxCard disableTilt={true}>
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Left Column - Background Card */}
+            <ParallaxCard disableTilt={true}>
               <Card>
                 <CardHeader>
-                <CardTitle className="font-mono">Background</CardTitle>
+                  <CardTitle className="font-mono">Background</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                <p className="font-mono text-sm leading-relaxed">
-                  I’m an engineering student driven by curiosity and a passion for building impactful projects. My journey spans club leadership and turning innovative ideas into reality, with hands-on experience in server-side development and backend technologies.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-4">
-                  {skills.map((skill) => (
-                  <Badge key={skill} variant="secondary" className="font-mono text-xs">
-                    {skill}
-                  </Badge>
-                  ))}
-                </div>
-                <Button asChild className="font-mono mt-4">
-                  <Link href="/about">Know Me More</Link>
-                </Button>
+                  <p className="font-mono text-sm leading-relaxed">
+                    I'm an engineering student driven by curiosity and a passion for building impactful projects. My journey spans club leadership and turning innovative ideas into reality, with hands-on experience in server-side development and backend technologies.
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-4">
+                    {skills.map((skill) => (
+                      <Badge key={skill} variant="secondary" className="font-mono text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Button asChild className="font-mono mt-4">
+                    <Link href="/about">Know Me More</Link>
+                  </Button>
                 </CardContent>
               </Card>
-              </ParallaxCard>
-            </div>
-            </div>
+            </ParallaxCard>
+
+            {/* Right Column - Journey Timeline */}
+            <ParallaxCard disableTilt={true}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-mono">My Journey</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative space-y-4">
+                    {/* Gradient Timeline Line */}
+                    <div className="absolute left-[15px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-primary/50 to-transparent" />
+                    
+                    {timeline.map((item, index) => (
+                      <div key={index} className="relative pl-12 group">
+                        {/* Icon Circle */}
+                        <div className="absolute left-0 top-0.5 w-8 h-8 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                          {item.icon}
+                        </div>
+                        
+                        {/* Timeline Content */}
+                        <div className="pb-2">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 className="font-mono font-semibold text-sm">{item.title}</h4>
+                            <Badge variant="outline" className="font-mono text-[10px] shrink-0 px-1.5 py-0">
+                              {item.period}
+                            </Badge>
+                          </div>
+                          <p className="font-mono text-xs text-primary/80 mb-0.5">{item.subtitle}</p>
+                          <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ParallaxCard>
+          </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-12 md:py-24 bg-muted/20 relative">
+      <section id="projects" className="py-16 md:py-24 relative">
         <div className="container mx-auto px-4 space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
             <h2 className="font-mono text-3xl md:text-4xl font-bold">Projects</h2>
@@ -410,7 +471,7 @@ export default function HomePage() {
       </section>
 
       {/* Certifications Section */}
-      <section id="certifications" className="py-12 md:py-24 relative">
+      <section id="certifications" className="py-16 md:py-24 relative">
         <div className="container mx-auto px-4 space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-3">
@@ -450,7 +511,7 @@ export default function HomePage() {
 
 
       {/* Contact Section */}
-      <section id="contact" className="py-12 md:py-24 relative">
+      <section id="contact" className="py-16 md:py-24 relative">
         <div className="container mx-auto px-4 space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
             <h2 className="font-mono text-3xl md:text-4xl font-bold">Get In Touch</h2>
@@ -601,7 +662,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t bg-muted/10">
+      <footer className="py-16 border-t bg-muted/10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="font-mono text-sm text-muted-foreground">

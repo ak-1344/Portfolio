@@ -1,0 +1,3 @@
+{
+  "buildCommand": "NEXT_SHARP_PATH=/tmp/noop-sharp pnpm build"
+}

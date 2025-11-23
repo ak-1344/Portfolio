@@ -8,6 +8,11 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "pnpm": {
+    "overrides": {
+      "sharp": "npm:@vercel/noop@1.0.1"
+    }
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",

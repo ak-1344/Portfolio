@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata = generateMetadata({
   title: 'Home',
-  description: 'Backend Developer passionate about building scalable systems, exploring AI/ML, and leading tech communities. Check out my projects, certifications, and blog.',
+  description: 'Backend Developer from VIT Chennai (8.74 CGPA) specializing in scalable systems, Node.js, Python, PostgreSQL. Nexus Club President. Explore projects in AI/ML, Docker, AWS & more.',
 })
 
 export default function RootLayout({

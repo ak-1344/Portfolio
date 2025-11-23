@@ -5,16 +5,31 @@ export function generatePersonSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: siteConfig.author.name,
+    alternateName: 'Aditya',
     url: siteConfig.url,
     image: siteConfig.ogImage,
     email: siteConfig.author.email,
     jobTitle: 'Backend Developer',
     description: siteConfig.description,
     knowsAbout: siteConfig.keywords,
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: 'VIT Chennai',
+      sameAs: 'https://chennai.vit.ac.in/'
+    },
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Nexus Club',
+      description: 'Backend-oriented technical club'
+    },
     sameAs: [
       siteConfig.links.github,
       siteConfig.links.linkedin,
     ],
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'IN',
+    },
   }
 }
 

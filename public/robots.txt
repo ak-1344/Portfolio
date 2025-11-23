@@ -1,0 +1,12 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow specific paths
+Disallow: /api/
+Disallow: /test-contact/
+Disallow: /_next/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://adityak.dev/sitemap.xml

@@ -8,11 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "pnpm": {
-    "overrides": {
-      "sharp": "npm:@vercel/noop@1.0.1"
-    }
-  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
@@ -52,7 +47,7 @@
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "^16.0.3",
+    "next": "^16.0.5",
     "next-themes": "latest",
     "react": "^19.2.0",
     "react-day-picker": "8.10.1",
@@ -64,7 +59,8 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/node": "^22",

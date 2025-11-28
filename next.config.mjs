@@ -4,14 +4,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
-    loader: 'custom',
-    loaderFile: './lib/image-loader.ts',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   // Updated for Next.js 16: moved from experimental
   serverExternalPackages: ['sharp'],
-  // Empty turbopack config to use Turbopack without custom webpack
-  turbopack: {},
   // Optimize for production
   compress: true,
   poweredByHeader: false,

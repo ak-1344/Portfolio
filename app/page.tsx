@@ -184,8 +184,7 @@ export default function HomePage() {
                 <div className="font-mono text-xl md:text-2xl text-muted-foreground space-y-2">
                   <div> Developer | Builder | Explorer </div>
                   <div className="text-sm md:text-base mt-4 leading-relaxed">
-                    I build projects out of curiosity, explore the tech world to have fun,
-                    <br /> and also enjoy leading and putting myself out in the world.
+                    I build projects out of curiosity, explore the tech world to have fun, and also enjoy leading and putting myself out in the world.
                   </div>
                 </div>
               </div>

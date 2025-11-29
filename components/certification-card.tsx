@@ -6,6 +6,8 @@ import { ExternalLink, Award, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Certification } from "@/types"
 import { formatDate, isCertificationExpired, getCertificationStatus } from "@/lib/helpers"
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import Image from "next/image"
 
 interface CertificationCardProps {
   certification: Certification
@@ -42,6 +44,40 @@ export function CertificationCard({ certification }: CertificationCardProps) {
           <p className="font-mono text-sm preserve-whitespace text-muted-foreground">
             {certification.description}
           </p>
+        )}
+
+        {/* Certificate Image */}
+        {certification.certificate_image && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="relative h-48 w-full cursor-pointer overflow-hidden rounded-md border hover:opacity-90 transition-opacity group">
+                <Image
+                  src={certification.certificate_image}
+                  alt={`Certificate for ${certification.name}`}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                  <span className="opacity-0 group-hover:opacity-100 text-white font-mono text-sm bg-black/50 px-3 py-1 rounded-full transition-opacity">
+                    View Certificate
+                  </span>
+                </div>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-5xl w-full p-0 overflow-hidden bg-background border shadow-lg">
+              <DialogHeader className="p-4 border-b">
+                <DialogTitle className="font-mono text-lg">{certification.name}</DialogTitle>
+              </DialogHeader>
+              <div className="relative w-full h-[80vh] bg-muted/20">
+                <Image
+                  src={certification.certificate_image}
+                  alt={`Certificate for ${certification.name}`}
+                  fill
+                  className="object-contain p-4"
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
 
         {/* Dates */}

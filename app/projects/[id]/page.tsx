@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -12,55 +12,70 @@ import { supabase } from "@/lib/supabaseClient"
 import type { Project } from "@/types"
 
 interface ProjectPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ProjectPage({ params }: ProjectPageProps) {
+  const { id } = use(params)
   const [project, setProject] = useState<Project | null>(null)
   const [relatedProjects, setRelatedProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetchProjectData()
-  }, [params.id])
-
-  const fetchProjectData = async () => {
-    setLoading(true)
-    try {
-      // Fetch main project
-      const { data: projectData, error: projectError } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("id", params.id)
-        .single()
-
-      if (projectError) throw projectError
-      if (!projectData) {
-        notFound()
-      }
-
-      setProject(projectData)
-
-      // Fetch related projects
-      if (projectData.category) {
-        const { data: relatedData } = await supabase
+    const fetchProjectData = async () => {
+      setLoading(true)
+      setError(false)
+      try {
+        // Fetch main project
+        const { data: projectData, error: projectError } = await supabase
           .from("projects")
           .select("*")
-          .neq("id", params.id)
-          .eq("category", projectData.category)
-          .limit(3)
+          .eq("id", id)
+          .single()
 
-        setRelatedProjects(relatedData || [])
+        if (projectError) {
+          console.error("Error fetching project:", projectError)
+          setError(true)
+          setLoading(false)
+          return
+        }
+
+        if (!projectData) {
+          console.error("No project data found for id:", id)
+          setError(true)
+          setLoading(false)
+          return
+        }
+
+        console.log("Project data fetched successfully:", projectData)
+        setProject(projectData)
+
+        // Fetch related projects
+        if (projectData.category) {
+          const { data: relatedData } = await supabase
+            .from("projects")
+            .select("*")
+            .neq("id", id)
+            .eq("category", projectData.category)
+            .limit(3)
+
+          if (relatedData) {
+            setRelatedProjects(relatedData)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching project:", error)
+        setError(true)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching project:", error)
-      notFound()
-    } finally {
-      setLoading(false)
     }
-  }
+
+    fetchProjectData()
+  }, [id])
 
   if (loading) {
     return (
@@ -70,7 +85,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     )
   }
 
-  if (!project) {
+  if (error || !project) {
     return notFound()
   }
 

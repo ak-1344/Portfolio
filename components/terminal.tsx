@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 interface TerminalLine {
-  type: "command" | "output" | "error"
+  type: "command" | "output" | "error" | "help" | "directory"
   content: string
 }
 
@@ -49,7 +49,7 @@ export function Terminal() {
   const baseFileSystem: FileSystem = {
     "~": {
       type: "directory",
-      children: ["pages", "resume.pdf", "github", "linkedin", "email", "README.md"],
+      children: ["pages", "resume", "github", "linkedin", "email", "README.md"],
     },
     "~/README.md": {
       type: "file",
@@ -66,7 +66,7 @@ Navigation Pages:
 - now         : What I'm doing now
 
 Social Links & Files:
-- resume.pdf  : View/Download resume
+- resume      : View/Download resume
 - github      : Open GitHub profile
 - linkedin    : Open LinkedIn profile
 - email       : Open email client
@@ -83,7 +83,7 @@ Commands:
 
 Simply type a page name to navigate!`,
     },
-    "~/resume.pdf": {
+    "~/resume": {
       type: "file",
       content: "Opening resume in new tab...",
       url: "/resume.pdf",
@@ -210,7 +210,7 @@ Simply type a page name to navigate!`,
     }
   }, [isDragging, dragStart, isMinimized])
 
-  const addToHistory = (type: "command" | "output" | "error", content: string) => {
+  const addToHistory = (type: "command" | "output" | "error" | "help" | "directory", content: string) => {
     setHistory((prev) => [...prev, { type, content }])
   }
 
@@ -228,18 +228,18 @@ Simply type a page name to navigate!`,
 
     switch (cmd.toLowerCase()) {
       case "help":
-        addToHistory("output", "Available commands:")
-        addToHistory("output", "  ls              - List directory contents")
-        addToHistory("output", "  pwd             - Print working directory")
-        addToHistory("output", "  cd <directory>  - Change directory")
-        addToHistory("output", "  cat <file>      - Display file contents")
-        addToHistory("output", "  mkdir <name>    - Create directory (temporary)")
-        addToHistory("output", "  touch <name>    - Create file (temporary)")
-        addToHistory("output", "  clear           - Clear terminal screen")
-        addToHistory("output", "  help            - Show this help message")
+        addToHistory("help", "Available commands:")
+        addToHistory("help", "  ls              - List directory contents")
+        addToHistory("help", "  pwd             - Print working directory")
+        addToHistory("help", "  cd <directory>  - Change directory")
+        addToHistory("help", "  cat <file>      - Display file contents")
+        addToHistory("help", "  mkdir <name>    - Create directory (temporary)")
+        addToHistory("help", "  touch <name>    - Create file (temporary)")
+        addToHistory("help", "  clear           - Clear terminal screen")
+        addToHistory("help", "  help            - Show this help message")
         addToHistory("output", "")
-        addToHistory("output", "Navigation shortcuts:")
-        addToHistory("output", `  ${pages.join(", ")}`)
+        addToHistory("help", "Navigation shortcuts:")
+        addToHistory("help", `  ${pages.join(", ")}`)
         addToHistory("output", "")
         break
 
@@ -259,7 +259,7 @@ Simply type a page name to navigate!`,
         break
 
       case "pwd":
-        addToHistory("output", currentDirectory)
+        addToHistory("directory", currentDirectory)
         addToHistory("output", "")
         break
 
@@ -292,6 +292,7 @@ Simply type a page name to navigate!`,
       case "cat":
         if (args.length === 0) {
           addToHistory("error", "cat: missing file operand")
+          addToHistory("output", "")
         } else {
           const filePath = args[0].startsWith("~/")
             ? args[0]
@@ -299,15 +300,14 @@ Simply type a page name to navigate!`,
           
           const file = fileSystem[filePath]
           if (file && file.type === "file") {
-            if (file.url) {
-              addToHistory("output", file.content || "Opening...")
-              addToHistory("output", "")
-              window.open(file.url, "_blank")
-            } else if (file.content) {
+            if (file.content) {
               file.content.split("\n").forEach((line) => {
                 addToHistory("output", line)
               })
               addToHistory("output", "")
+            }
+            if (file.url) {
+              window.open(file.url, "_blank")
             }
           } else {
             addToHistory("error", `cat: ${args[0]}: No such file`)
@@ -391,7 +391,24 @@ Simply type a page name to navigate!`,
           setTimeout(() => {
             router.push(targetPage === "home" ? "/" : `/${targetPage}`)
           }, 300)
-        } else if (cmd.startsWith("./")) {
+        } else {
+          // Check if it's a file without ./ prefix
+          const filePath = `${currentDirectory}/${cmd}`.replace("~//", "~/")
+          const file = fileSystem[filePath]
+          
+          if (file && file.type === "file") {
+            // Execute file
+            if (file.content) {
+              file.content.split("\n").forEach((line) => {
+                addToHistory("output", line)
+              })
+            }
+            if (file.url) {
+              addToHistory("output", "")
+              window.open(file.url, "_blank")
+            }
+            addToHistory("output", "")
+          } else if (cmd.startsWith("./")) {
           const target = cmd.substring(2)
           
           // Check if it's a page
@@ -403,23 +420,31 @@ Simply type a page name to navigate!`,
               router.push(target === "home" ? "/" : `/${target}`)
             }, 300)
           } else {
-            // Check if it's a file with URL
+            // Check if it's a file
             const filePath = `${currentDirectory}/${target}`.replace("~//", "~/")
             const file = fileSystem[filePath]
             
-            if (file && file.type === "file" && file.url) {
+            if (file && file.type === "file") {
               addToHistory("output", `Executing ./${target}...`)
-              addToHistory("output", file.content || "Opening...")
+              if (file.content) {
+                file.content.split("\n").forEach((line) => {
+                  addToHistory("output", line)
+                })
+              }
+              if (file.url) {
+                addToHistory("output", "")
+                window.open(file.url, "_blank")
+              }
               addToHistory("output", "")
-              window.open(file.url, "_blank")
             } else {
               addToHistory("error", `bash: ./${target}: No such file or directory`)
               addToHistory("output", "")
             }
           }
-        } else {
-          addToHistory("error", `Command not found: ${cmd}. Type 'help' for available commands.`)
-          addToHistory("output", "")
+          } else {
+            addToHistory("error", `Command not found: ${cmd}. Type 'help' for available commands.`)
+            addToHistory("output", "")
+          }
         }
         break
     }
@@ -539,9 +564,11 @@ Simply type a page name to navigate!`,
                 key={index}
                 className={cn(
                   "mb-1",
-                  line.type === "command" && "text-primary font-semibold",
-                  line.type === "output" && "text-foreground",
-                  line.type === "error" && "text-destructive"
+                  line.type === "command" && "text-blue-400 font-semibold",
+                  line.type === "output" && "text-green-400",
+                  line.type === "error" && "text-red-400",
+                  line.type === "help" && "text-yellow-400",
+                  line.type === "directory" && "text-cyan-400 font-semibold"
                 )}
               >
                 {line.content}
@@ -550,14 +577,14 @@ Simply type a page name to navigate!`,
 
             {/* Current Input Line */}
             <div className="flex items-center gap-2">
-              <span className="text-primary font-semibold">{currentDirectory} $</span>
+              <span className="text-cyan-400 font-semibold">{currentDirectory} $</span>
               <input
                 ref={inputRef}
                 type="text"
                 value={currentInput}
                 onChange={(e) => setCurrentInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="flex-1 bg-transparent border-none outline-none text-foreground font-mono text-sm"
+                className="flex-1 bg-transparent border-none outline-none text-blue-400 font-mono text-sm caret-blue-400"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"

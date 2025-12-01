@@ -6,17 +6,19 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Github, ExternalLink, Pin } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Github, ExternalLink, Pin, Search, X } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
 import type { Project } from "@/types"
-
-const categories = ["All", "Backend", "ML", "Club", "Personal"]
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [pinnedProjects, setPinnedProjects] = useState<Project[]>([])
   const [regularProjects, setRegularProjects] = useState<Project[]>([])
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [allTags, setAllTags] = useState<string[]>([])
+  const [topTags, setTopTags] = useState<Array<{ tag: string; count: number }>>([])
+  const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -45,6 +47,26 @@ export default function ProjectsPage() {
 
       setPinnedProjects(pinned)
       setRegularProjects(regular)
+
+      // Extract all unique tags and count occurrences
+      const tagsMap = new Map<string, number>()
+      allProjects.forEach((project) => {
+        if (project.tags && Array.isArray(project.tags)) {
+          project.tags.forEach((tag: string) => {
+            tagsMap.set(tag, (tagsMap.get(tag) || 0) + 1)
+          })
+        }
+      })
+      
+      const allUniqueTags = Array.from(tagsMap.keys()).sort()
+      setAllTags(allUniqueTags)
+      
+      // Get top 3 most used tags
+      const sortedTags = Array.from(tagsMap.entries())
+        .map(([tag, count]) => ({ tag, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3)
+      setTopTags(sortedTags)
     } catch (error) {
       console.error("Error fetching projects:", error)
     } finally {
@@ -52,15 +74,48 @@ export default function ProjectsPage() {
     }
   }
 
-  const filteredPinnedProjects =
-    selectedCategory === "All"
-      ? pinnedProjects
-      : pinnedProjects.filter((project) => project.category === selectedCategory)
+  // Apply search filter
+  const searchFilteredPinned = searchQuery
+    ? pinnedProjects.filter((project) =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : pinnedProjects
 
-  const filteredRegularProjects =
-    selectedCategory === "All"
-      ? regularProjects
-      : regularProjects.filter((project) => project.category === selectedCategory)
+  const searchFilteredRegular = searchQuery
+    ? regularProjects.filter((project) =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : regularProjects
+
+  // Apply tag filter
+  const tagFilteredProjects = selectedTag
+    ? projects.filter((project) => project.tags && project.tags.includes(selectedTag))
+    : [...searchFilteredPinned, ...searchFilteredRegular]
+
+  // When tag is selected, ignore pinned section but maintain display order
+  const displayedProjects = selectedTag
+    ? tagFilteredProjects.sort((a, b) => a.display_order - b.display_order)
+    : null
+
+  const handleTagClick = (tag: string) => {
+    if (selectedTag === tag) {
+      setSelectedTag(null)
+    } else {
+      setSelectedTag(tag)
+      setSearchQuery("") // Clear search when selecting a tag
+    }
+  }
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
+    if (value) {
+      setSelectedTag(null) // Clear tag filter when searching
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
@@ -71,22 +126,63 @@ export default function ProjectsPage() {
           <p className="font-mono text-muted-foreground text-base md:text-lg">Things I've built and learned from.</p>
         </div>
 
-        </div>
+        {/* Search Bar and Tags Container */}
+        <div className="space-y-6">
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search projects by name, description, or tags..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-12 pr-12 py-6 font-mono text-sm rounded-full border-2 focus-visible:ring-offset-0 transition-all duration-200"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full hover:bg-muted"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          {categories.map((category) => (
-          <Button
-            key={category}
-            variant={selectedCategory === category ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedCategory(category)}
-            className="font-mono"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
+          {/* Top 3 Tags */}
+          {topTags.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                {/* <span className="font-mono text-sm text-muted-foreground">Popular tags:</span> */}
+                {selectedTag && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedTag(null)}
+                    className="font-mono text-xs h-7"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {topTags.map(({ tag, count }) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTag === tag ? "default" : "outline"}
+                    className="font-mono text-xs cursor-pointer hover:bg-primary/90 transition-colors px-3 py-1.5"
+                    onClick={() => handleTagClick(tag)}
+                  >
+                    {tag} ({count})
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
       {loading ? (
         <div className="text-center py-12">
@@ -95,51 +191,73 @@ export default function ProjectsPage() {
             <div className="skeleton-card" />
           </div>
         </div>
+      ) : selectedTag ? (
+        // Tag-filtered view (no pinned section)
+        <div className="space-y-6">
+          <div className="text-center">
+            <p className="font-mono text-sm text-muted-foreground">
+              Showing projects with tag: <span className="font-bold text-foreground">{selectedTag}</span>
+            </p>
+          </div>
+          {displayedProjects && displayedProjects.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} isPinned={false} onTagClick={handleTagClick} />
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p className="empty-state-text">No projects found with this tag.</p>
+            </div>
+          )}
+        </div>
       ) : (
+        // Normal view with pinned and regular sections
         <div className="space-y-16">
           {/* Pinned Projects Section */}
-          {filteredPinnedProjects.length > 0 && (
+          {searchFilteredPinned.length > 0 && (
             <div className="space-y-6">
               <div className="flex items-center gap-2">
                 <Pin className="h-6 w-6 text-yellow-600" />
                 <h2 className="font-mono text-2xl font-bold">Pinned Projects</h2>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPinnedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} isPinned={true} />
+                {searchFilteredPinned.map((project) => (
+                  <ProjectCard key={project.id} project={project} isPinned={true} onTagClick={handleTagClick} />
                 ))}
               </div>
             </div>
           )}
 
           {/* Regular Projects Section */}
-          {filteredRegularProjects.length > 0 && (
+          {searchFilteredRegular.length > 0 && (
             <div className="space-y-6">
-              {filteredPinnedProjects.length > 0 && (
+              {searchFilteredPinned.length > 0 && (
                 <h2 className="font-mono text-2xl font-bold">All Projects</h2>
               )}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredRegularProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} isPinned={false} />
+                {searchFilteredRegular.map((project) => (
+                  <ProjectCard key={project.id} project={project} isPinned={false} onTagClick={handleTagClick} />
                 ))}
               </div>
             </div>
           )}
 
           {/* Empty State */}
-          {filteredPinnedProjects.length === 0 && filteredRegularProjects.length === 0 && (
+          {searchFilteredPinned.length === 0 && searchFilteredRegular.length === 0 && (
             <div className="empty-state">
-              <p className="empty-state-text">No projects found in this category.</p>
+              <p className="empty-state-text">{searchQuery ? "No projects found matching your search." : "No projects found."}</p>
             </div>
           )}
         </div>
       )}
+      </div>
     </div>
   )
 }
 
 // Project Card Component
-function ProjectCard({ project, isPinned }: { project: Project; isPinned: boolean }) {
+function ProjectCard({ project, isPinned, onTagClick }: { project: Project; isPinned: boolean; onTagClick?: (tag: string) => void }) {
   return (
     <Card className={`group hover:shadow-lg transition-shadow ${isPinned ? "card-pinned" : ""}`}>
       {/* Pin Badge */}
@@ -169,7 +287,15 @@ function ProjectCard({ project, isPinned }: { project: Project; isPinned: boolea
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-1">
           {project.tags?.slice(0, 3).map((tech) => (
-            <Badge key={tech} variant="secondary" className="font-mono text-xs">
+            <Badge 
+              key={tech} 
+              variant="secondary" 
+              className="font-mono text-xs cursor-pointer hover:bg-secondary/80 transition-colors"
+              onClick={(e) => {
+                e.preventDefault()
+                onTagClick?.(tech)
+              }}
+            >
               {tech}
             </Badge>
           ))}

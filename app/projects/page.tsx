@@ -126,60 +126,63 @@ export default function ProjectsPage() {
           <p className="font-mono text-muted-foreground text-base md:text-lg">Things I've built and learned from.</p>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search projects by name, description, or tags..."
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 pr-10 font-mono"
-            />
-            {searchQuery && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
-                onClick={() => setSearchQuery("")}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
+        {/* Search Bar and Tags Container */}
+        <div className="space-y-6">
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search projects by name, description, or tags..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-12 pr-12 py-6 font-mono text-sm rounded-full border-2 focus-visible:ring-offset-0 transition-all duration-200"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full hover:bg-muted"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
 
-      {/* Top 3 Tags */}
-      {topTags.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-center gap-2">
-            <span className="font-mono text-sm text-muted-foreground">Popular tags:</span>
-            {selectedTag && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedTag(null)}
-                className="font-mono text-xs h-7"
-              >
-                Clear
-              </Button>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {topTags.map(({ tag, count }) => (
-              <Badge
-                key={tag}
-                variant={selectedTag === tag ? "default" : "outline"}
-                className="font-mono text-xs cursor-pointer hover:bg-primary/90 transition-colors"
-                onClick={() => handleTagClick(tag)}
-              >
-                {tag} ({count})
-              </Badge>
-            ))}
-          </div>
+          {/* Top 3 Tags */}
+          {topTags.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                {/* <span className="font-mono text-sm text-muted-foreground">Popular tags:</span> */}
+                {selectedTag && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedTag(null)}
+                    className="font-mono text-xs h-7"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {topTags.map(({ tag, count }) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTag === tag ? "default" : "outline"}
+                    className="font-mono text-xs cursor-pointer hover:bg-primary/90 transition-colors px-3 py-1.5"
+                    onClick={() => handleTagClick(tag)}
+                  >
+                    {tag} ({count})
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
       {loading ? (
         <div className="text-center py-12">

@@ -57,10 +57,10 @@ export default function NowPage() {
       <div className="space-y-4">
         <h1 className="font-mono text-3xl md:text-4xl font-bold">NOW</h1>
         <p className="font-mono text-muted-foreground text-base md:text-lg">What I'm currently focused on and working towards.</p>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
+        {/* <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
           <Clock className="h-4 w-4" />
           Last updated: {nowMeta?.updated_at ? formatDate(nowMeta.updated_at) : 'Recently'}
-        </div>
+        </div> */}
       </div>
 
       {/* Current Projects */}

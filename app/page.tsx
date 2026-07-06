@@ -25,7 +25,7 @@ const timeline = [
     period: "2023 - Present",
     title: "VIT Chennai",
     subtitle: "B.Tech Computer Science",
-    description: "8.74 CGPA • Nexus Club President",
+    description: "8.71 CGPA",
     icon: "🎓",
   },
   {

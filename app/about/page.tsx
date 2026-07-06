@@ -20,8 +20,22 @@ const timeline = [
     period: "2023 - Present",
     title: "VIT Chennai",
     subtitle: "B.Tech Computer Science (Core)",
-    description: "Currently maintaining 8.74 CGPA. Serving as Nexus Club President - a backend-oriented club. Developer by hobby, explorer by passion. Actively involved in building scalable systems and mentoring peers in backend development.",
+    description: "Currently maintaining 8.71 CGPA. Served as Nexus Club President - a backend-oriented club. Developer by hobby, explorer by passion. Actively involved in building scalable systems and mentoring peers in backend development.",
     icon: "🎓",
+  },
+  {
+    period: "May 2026 - June 2026",
+    title: "DRDO, Matcalfe House, Civil Lines, New Delhi",
+    subtitle: "Research Intern at SAG",
+    description: "Worked on software assurance and Secure SDLC validation for classified defence software at DRDO's SAG.",
+    icon: "⭐",
+  },
+  {
+    period: "May 2025 - June 2025",
+    title: "Kirat Communication Pvt Ltd.",
+    subtitle: "Project Intern",
+    description: "Built a bilingual voice assistant for rural kiosks using Raspberry Pi and AI-powered speech processing.",
+    icon: "⭐",
   },
   {
     period: "2022 - 2023",

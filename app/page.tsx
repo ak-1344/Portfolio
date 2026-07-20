@@ -199,6 +199,9 @@ export default function HomePage() {
                 <Button asChild variant="outline" className="font-mono">
                   <Link href="#projects">Projects</Link>
                 </Button>
+                <Button asChild variant="outline" className="font-mono">
+                  <Link href="https://leetcode.com/u/ak-1344">Leetcode</Link>
+                </Button>
                 <ResumeButton variant="outline" className="font-mono" />
               </div>
 

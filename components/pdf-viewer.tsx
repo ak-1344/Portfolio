@@ -3,12 +3,58 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Download, ExternalLink } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ChevronDown, Download, ExternalLink } from 'lucide-react'
 
 interface PDFViewerProps {
   pdfUrl: string
   isOpen: boolean
   onClose: () => void
+}
+
+const DEFAULT_RESUME_URL = '/resume.pdf'
+
+const RESUME_OPTIONS = [
+  {
+    label: 'Software Engineering',
+    pdfUrl: '/resumes/sde.pdf',
+  },
+  {
+    label: 'Backend Engineering',
+    pdfUrl: '/resumes/backend.pdf',
+  },
+  {
+    label: 'Cloud Engineering',
+    pdfUrl: '/resumes/cloud.pdf',
+  },
+  {
+    label: 'Site Reliability Engineering',
+    pdfUrl: '/resumes/sre.pdf',
+  },
+] as const
+
+type ResumeOption = (typeof RESUME_OPTIONS)[number]
+
+async function resolveResumeUrl(pdfUrl: string) {
+  if (!pdfUrl.startsWith('/')) {
+    return DEFAULT_RESUME_URL
+  }
+
+  try {
+    const response = await fetch(pdfUrl, { method: 'HEAD' })
+    if (response.ok) {
+      return pdfUrl
+    }
+  } catch {
+    // Fall through to the default resume when the asset cannot be checked.
+  }
+
+  return DEFAULT_RESUME_URL
 }
 
 export function PDFViewer({ pdfUrl, isOpen, onClose }: PDFViewerProps) {
@@ -65,18 +111,36 @@ interface ResumeButtonProps {
 
 export function ResumeButton({ className, variant = 'outline', size = 'default' }: ResumeButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const pdfUrl = '/resume.pdf' // Make sure to add your resume.pdf to the public folder
+  const [pdfUrl, setPdfUrl] = useState(DEFAULT_RESUME_URL)
+
+  const handleResumeSelect = async (resumeOption: ResumeOption) => {
+    const resolvedPdfUrl = await resolveResumeUrl(resumeOption.pdfUrl)
+    setPdfUrl(resolvedPdfUrl)
+    setIsOpen(true)
+  }
 
   return (
     <>
-      <Button
-        variant={variant}
-        size={size}
-        onClick={() => setIsOpen(true)}
-        className={className}
-      >
-        Resume
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={variant} size={size} className={className}>
+            Resume
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="min-w-56">
+          {RESUME_OPTIONS.map((resumeOption) => (
+            <DropdownMenuItem
+              key={resumeOption.pdfUrl}
+              onSelect={() => {
+                void handleResumeSelect(resumeOption)
+              }}
+            >
+              {resumeOption.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
       <PDFViewer
         pdfUrl={pdfUrl}
         isOpen={isOpen}

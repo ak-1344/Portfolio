@@ -168,11 +168,7 @@ nav {
 
 /* Better section spacing with visual separation */
 section:not(:first-child) {
-  @apply mt-16 md:mt-24 lg:mt-32;
-}
-
-section .container {
-  @apply py-12 md:py-16 lg:py-20;
+  @apply mt-8 md:mt-12 lg:mt-16;
 }
 
 /* Journey Timeline Styles */

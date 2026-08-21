@@ -87,7 +87,7 @@ export default function CertificationsPage() {
             <Award className="h-10 w-10 text-primary" />
             <h1 className="font-mono text-4xl font-bold">Certifications</h1>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="skeleton-card h-80" />
             ))}
@@ -177,7 +177,7 @@ export default function CertificationsPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredCerts.map((certification) => (
               <CertificationCard key={certification.id} certification={certification} />
             ))}

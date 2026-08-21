@@ -491,9 +491,9 @@ export default function HomePage() {
               <p className="font-mono text-muted-foreground">No certifications available yet.</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
               {certifications.map((certification) => (
-                <ParallaxCard key={certification.id} intensity={15}>
+                <ParallaxCard key={certification.id} intensity={15} className="h-full">
                   <CertificationCard certification={certification} />
                 </ParallaxCard>
               ))}
